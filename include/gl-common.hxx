@@ -24,7 +24,7 @@ public:
 	shader_handle& operator =(shader_handle const&) = default;
 	shader_handle& operator =(shader_handle&&) = default;
 
-	~shader_handle() = default;
+	~shader_handle();
 
 	shader_handle(
 		::std::string const& vertex_shader_file,
