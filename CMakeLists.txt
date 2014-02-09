@@ -24,7 +24,7 @@ add_library(
 
 set_target_properties(
   shader PROPERTIES
-  NOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+  SOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
 )
 
 ##################################################
@@ -38,5 +38,5 @@ target_link_libraries(graphics-common shader)
 
 set_target_properties(
   graphics-common PROPERTIES
-  NOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+  SOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
 )
