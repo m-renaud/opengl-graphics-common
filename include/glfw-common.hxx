@@ -12,16 +12,26 @@ namespace graphics {
 namespace glfw {
 
 using key_callback_type = ::std::function<void (GLFWwindow*, int, int, int, int)>;
+using mouse_callback_type = ::std::function<void (GLFWwindow*, int, int, int)>;
 
 static ::std::vector<key_callback_type> key_callback_list;
 static ::std::map<std::pair<int,int>, std::function<void()> > keycode_to_function_map;
 
-void        init();
-void        default_error_callback(int error, const char* description);
-void        framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void        key_callback(GLFWwindow*, int, int, int, int);
-void        add_key_callback(key_callback_type);
-void        add_key_callback(int, int, std::function<void()> const&);
+static ::std::vector<mouse_callback_type> mouse_callback_list;
+static ::std::map<std::pair<int,int>, std::function<void()> > mouse_click_to_function_map;
+
+void init();
+void default_error_callback(int error, const char* description);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+void key_callback(GLFWwindow*, int, int, int, int);
+void add_key_callback(key_callback_type);
+void add_key_callback(int, int, std::function<void()> const&);
+
+void mouse_callback(GLFWwindow*, int, int, int);
+void add_mouse_callback(mouse_callback_type);
+void add_mouse_callback(int, int, std::function<void()> const&);
+
 
 class window_handle
 {
@@ -35,6 +45,7 @@ public:
 	void close();
 	void make_current();
 	void set_key_callback(GLFWkeyfun callback);
+	void set_mouse_callback(GLFWmousebuttonfun callback);
 	void set_framebuffer_size_callback(GLFWframebuffersizefun callback);
 	void swap_buffers();
 	bool should_close();

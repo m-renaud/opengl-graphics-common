@@ -31,7 +31,7 @@ set_target_properties(
 # graphics-common library
 add_library(
   graphics-common SHARED
-  src/glew-common.cxx src/gl-common.cxx src/glfw-common.cxx
+  src/waypoint.cxx src/glew-common.cxx src/gl-common.cxx src/glfw-common.cxx 
 )
 
 target_link_libraries(graphics-common shader)

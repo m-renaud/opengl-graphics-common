@@ -22,6 +22,9 @@ window_handle::window_handle(
 	}
 
 	set_key_callback(::mrr::graphics::glfw::key_callback);
+	set_mouse_callback(::mrr::graphics::glfw::mouse_callback);
+
+	make_current();
 }
 
 window_handle::~window_handle()
@@ -42,6 +45,11 @@ void window_handle::make_current()
 void window_handle::set_key_callback(GLFWkeyfun callback)
 {
 	::glfwSetKeyCallback(window_, callback);
+}
+
+void window_handle::set_mouse_callback(GLFWmousebuttonfun callback)
+{
+	::glfwSetMouseButtonCallback(window_, callback);
 }
 
 void window_handle::set_framebuffer_size_callback(GLFWframebuffersizefun callback)
@@ -113,6 +121,29 @@ void add_key_callback(key_callback_type callback)
 void add_key_callback(int action, int key, std::function<void()> const& func)
 {
 	keycode_to_function_map[{action, key}] = func;
+}
+
+
+//m=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Mouse callbacks.
+void mouse_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	for (auto const& callback : mouse_callback_list)
+		callback(window, button, action, mods);
+
+	auto mouse_func_iter = mouse_click_to_function_map.find({action, button});
+	if (mouse_func_iter != mouse_click_to_function_map.end())
+		mouse_func_iter->second();
+}
+
+void add_mouse_callback(mouse_callback_type callback)
+{
+	mouse_callback_list.push_back(callback);
+}
+
+void add_mouse_callback(int action, int button, std::function<void()> const& func)
+{
+	mouse_click_to_function_map[{action, button}] = func;
 }
 
 

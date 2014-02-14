@@ -12,7 +12,7 @@ namespace mrr {
 namespace graphics {
 namespace gl {
 
-void init();
+void init(float r, float g, float b, float a);
 
 class shader_handle
 {
@@ -34,6 +34,8 @@ public:
 	void use();
 	GLuint get_program_id();
 	GLuint get_uniform_location(char const* var_name);
+
+	void set_ambient_light_colour(::glm::vec3 const& colour);
 
 private:
 	GLuint shader_program_id_;
@@ -100,25 +102,7 @@ private:
 class model
 {
 public:
-	model() = default;
-
-	void add_component(model& m);
-	virtual void update_model(::glm::mat4 const& t);
-	virtual void save();
-	virtual void reset();
-
-	virtual void render(::glm::mat4 const& VP);
-
-private:
-	::glm::vec3 center_;
-	std::vector<model*> components_;
-};
-
-
-class component : public model
-{
-public:
-	component();
+	model();
 
 	void set_shader(::mrr::graphics::gl::shader_handle const& s);
 	void set_shader(
@@ -126,21 +110,92 @@ public:
 		::std::string const& fragment_shader_file
 	);
 
+
+	template <typename Iter>
+	void add_components(Iter beg, Iter end)
+	{
+		for (; beg != end; ++beg)
+			add_component(*beg);
+	}
+
+	void add_component(model& m);
+	virtual void update_model(::glm::mat4 const& t);
+	virtual void apply_fp_transformation(::glm::mat4 const& t);
+	virtual void save();
+	virtual void reset();
+
+	void set_ambient_light_colour(::glm::vec3 const& colour);
+	::glm::vec3 const& get_ambient_light_colour() const;
+
+	GLuint get_ambient_light_colour_id() const;
+
+	void add_point_source(::glm::vec3 const& location, ::glm::vec3 const& colour, float power);
+
+	GLuint get_point_source_locations_id() const;
+	GLuint get_point_source_colours_id() const;
+	GLuint get_point_source_powers_id() const;
+	GLuint get_point_source_count_id() const;
+
+	std::vector<glm::vec3> const& get_point_source_locations() const;
+	std::vector<glm::vec3> const& get_point_source_colours() const;
+	std::vector<float> get_point_source_powers() const;
+
+	virtual void render(::glm::mat4 const& V, ::glm::mat4 const& P);
+
+protected:
+	::mrr::graphics::gl::shader_handle shader_;
+
+	GLuint mvp_matrix_id_;
+	GLuint model_matrix_id_;
+	GLuint view_matrix_id_;
+
+	::glm::vec3 center_;
+	::std::vector<model*> components_;
+
+	GLuint ambient_light_colour_id_;
+	::glm::vec3 ambient_light_colour_;
+
+	GLuint point_source_locations_id_;
+	GLuint point_source_colours_id_;
+	GLuint point_source_powers_id_;
+	GLuint point_source_count_id_;
+
+	::std::vector<glm::vec3> point_source_locations_;
+	::std::vector<glm::vec3> point_source_colours_;
+	::std::vector<float> point_source_powers_;
+
+	// glm::vec3 point_source_location_;
+	// glm::vec3 point_source_colour_;
+	// float point_source_power_;
+};
+
+
+class component : public model
+{
+private:
+	void update_location();
+
+public:
+	component();
+
+	::glm::vec4 const& get_location() const;
+
 	void set_vertex_data(GLfloat const* vertex_data, int size);
 	void set_colour_data(GLfloat const* colour_data);
 	void set_colour(::glm::vec3 const& shape_colour);
 	void set_uv_data(GLfloat const* uv_data, int size);
+	void set_normal_data(GLfloat const* normal_data, int size);
 	void load_texture(::std::string const& filename);
+	void set_init_model(::glm::mat4 const& m);
 	void set_model(::glm::mat4 const& m);
 	void update_model(::glm::mat4 const& t);
+	void apply_fp_transformation(::glm::mat4 const& t);
 	void save();
 	void reset();
 
-	virtual void render(::glm::mat4 const& VP);
+	virtual void render(::glm::mat4 const& V, ::glm::mat4 const& P);
 
-private:
-	::mrr::graphics::gl::shader_handle shader_;
-	GLuint mvp_matrix_id_;
+protected:
 	GLuint texture_sampler_id_;
 
 	GLuint shape_colour_id_;
@@ -155,10 +210,15 @@ private:
 	::mrr::graphics::gl::buffer uv_buffer_;
 	GLfloat const* uv_data_;
 
+	::mrr::graphics::gl::buffer normal_buffer_;
+	GLfloat const* normal_data_;
+
 	::mrr::graphics::gl::texture texture_;
 
 	int va_size_;
 
+	::glm::vec4 location_;
+	::glm::mat4 init_model_;
 	::glm::mat4 model_;
 	::glm::mat4 model_save_;
 };
