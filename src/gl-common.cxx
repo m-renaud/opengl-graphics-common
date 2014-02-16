@@ -1,5 +1,6 @@
 #include <mrr/graphics/gl-common.hxx>
 #include <mrr/graphics/shader.hxx>
+#include <mrr/graphics/obj_loader.hxx>
 
 #include <iostream>
 #include <string.h>
@@ -430,6 +431,24 @@ void component::apply_fp_transformation(::glm::mat4 const& t)
 {
 	model_ = model_ * t;
 	update_location();
+}
+
+void component::load_wavefront(std::string const& model_file)
+{
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> uvs;
+	std::vector<glm::vec3> normals;
+
+	bool successful = impl::load_wavefront(model_file, vertices, uvs, normals);
+	if (!successful)
+	{
+		std::cerr << "Failed to load Wavefront OBJ file.\n";
+		std::exit(1);
+	}
+
+	set_vertex_data(&vertices[0].x, vertices.size() * sizeof(glm::vec3));
+	set_uv_data(&uvs[0].x, uvs.size() * sizeof(glm::vec2));
+	set_normal_data(&normals[0].x, normals.size() * sizeof(glm::vec3));
 }
 
 void component::render(::glm::mat4 const& V, ::glm::mat4 const& P)

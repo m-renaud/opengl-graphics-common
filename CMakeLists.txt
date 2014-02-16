@@ -25,6 +25,20 @@ add_library(
 set_target_properties(
   shader PROPERTIES
   SOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+  )
+
+
+##################################################
+# Wavefront OBJ library
+
+add_library(
+  obj_loader SHARED
+  src/obj_loader.cxx
+)
+
+set_target_properties(
+  obj_loader PROPERTIES
+  SOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
 )
 
 ##################################################
@@ -34,7 +48,7 @@ add_library(
   src/waypoint.cxx src/glew-common.cxx src/gl-common.cxx src/glfw-common.cxx 
 )
 
-target_link_libraries(graphics-common shader)
+target_link_libraries(graphics-common shader obj_loader)
 
 set_target_properties(
   graphics-common PROPERTIES

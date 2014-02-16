@@ -190,6 +190,7 @@ public:
 	void set_model(::glm::mat4 const& m);
 	void update_model(::glm::mat4 const& t);
 	void apply_fp_transformation(::glm::mat4 const& t);
+	void load_wavefront(std::string const& path);
 	void save();
 	void reset();
 
