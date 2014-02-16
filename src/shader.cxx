@@ -30,6 +30,10 @@ GLuint load_shaders(
 	const char* fragment_shader_path
 )
 {
+	std::clog << "Loading shaders...\n";
+	std::clog << "  Vertex shader: \t" << vertex_shader_path << std::endl
+	          << "  Fragment shader: \t" << vertex_shader_path << std::endl;
+
 	GLuint vertex_shader_id = ::glCreateShader(GL_VERTEX_SHADER);
 	GLuint fragment_shader_id = ::glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -43,7 +47,7 @@ GLuint load_shaders(
 	}
 	else
 	{
-		std::cerr << "Cannot open vertex shader!!!\tpath: " << vertex_shader_path << std::endl;
+		std::cerr << "ERROR: Cannot open vertex shader...\tpath: " << vertex_shader_path << std::endl;
 		return 0;
 	}
 
@@ -57,7 +61,7 @@ GLuint load_shaders(
 	}
 	else
 	{
-		std::cerr << "Cannot open fragment shader!!!\tpath: " << fragment_shader_path << std::endl;
+		std::cerr << "ERROR: Cannot open fragment shader...\tpath: " << fragment_shader_path << std::endl;
 		return 0;
 	}
 
@@ -66,7 +70,7 @@ GLuint load_shaders(
 	int info_log_length;
 
 	// Compile the vertex shader.
-	std::clog << "Compiling vertex shader...\tpath: " << vertex_shader_path << std::endl;
+	std::clog << "  Compiling vertex shader...\n";
 	const char* vertex_source_ptr = vertex_shader_code.c_str();
 	::glShaderSource(vertex_shader_id, 1, &vertex_source_ptr, NULL);
 	::glCompileShader(vertex_shader_id);
@@ -74,16 +78,15 @@ GLuint load_shaders(
 	// Check that the vertex shader was loaded correctly.
 	::glGetShaderiv(vertex_shader_id, GL_COMPILE_STATUS, &result);
 	::glGetShaderiv(vertex_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-	if (info_log_length > 0)
+	if (info_log_length > 1)
 	{
 		std::vector<char> vertex_shader_error_message(info_log_length+1);
 		::glGetShaderInfoLog(vertex_shader_id, info_log_length, NULL, &vertex_shader_error_message[0]);
 		std::cerr << std::string(&vertex_shader_error_message[0]) << std::endl;
 	}
 
-
 	// Compile the fragment shader.
-	std::clog << "Compiling fragment shader...\tpath: " << fragment_shader_path << std::endl;
+	std::clog << "  Compiling fragment shader...\n";
 	const char* fragment_source_ptr = fragment_shader_code.c_str();
 	::glShaderSource(fragment_shader_id, 1, &fragment_source_ptr, NULL);
 	::glCompileShader(fragment_shader_id);
@@ -91,7 +94,7 @@ GLuint load_shaders(
 	// Check that the fragment shader was loaded correctly.
 	::glGetShaderiv(fragment_shader_id, GL_COMPILE_STATUS, &result);
 	::glGetShaderiv(fragment_shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
-	if (info_log_length > 0)
+	if (info_log_length > 1)
 	{
 		std::vector<char> fragment_shader_error_message(info_log_length+1);
 		::glGetShaderInfoLog(fragment_shader_id, info_log_length, NULL, &fragment_shader_error_message[0]);
@@ -99,7 +102,7 @@ GLuint load_shaders(
 	}
 
 	// Link the shader program.
-	std::clog << "Linking program...\n";
+	std::clog << "  Linking shader program...\n";
 	GLuint program_id = ::glCreateProgram();
 	::glAttachShader(program_id, vertex_shader_id);
 	::glAttachShader(program_id, fragment_shader_id);
@@ -108,7 +111,7 @@ GLuint load_shaders(
 	// Check the program for correctness.
 	::glGetProgramiv(program_id, GL_LINK_STATUS, &result);
 	::glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &info_log_length);
-	if (info_log_length > 0)
+	if (info_log_length > 1)
 	{
 		std::vector<char> program_error_message(info_log_length+1);
 		::glGetProgramInfoLog(program_id, info_log_length, NULL, &program_error_message[0]);
@@ -117,6 +120,8 @@ GLuint load_shaders(
 
 	::glDeleteShader(vertex_shader_id);
 	::glDeleteShader(fragment_shader_id);
+
+	std::clog << "  Shader successfully loaded...\n";
 
 	return program_id;
 }

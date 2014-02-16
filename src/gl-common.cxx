@@ -116,6 +116,8 @@ shader_handle::shader_handle(
 		  ::load_shaders(vertex_shader_file.c_str(), fragment_shader_file.c_str())
 	  )
 {
+	if (shader_program_id_ == 0)
+		std::exit(1);
 }
 
 shader_handle::~shader_handle()
