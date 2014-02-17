@@ -4,6 +4,7 @@
 #include <mrr/graphics/glew-common.hxx>
 
 #include <string>
+#include <set>
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -119,6 +120,7 @@ public:
 	}
 
 	void add_component(model& m);
+	void remove_component(model& m);
 	virtual void update_model(::glm::mat4 const& t);
 	virtual void apply_fp_transformation(::glm::mat4 const& t);
 	virtual void save();
@@ -150,7 +152,7 @@ protected:
 	GLuint view_matrix_id_;
 
 	::glm::vec3 center_;
-	::std::vector<model*> components_;
+	::std::set<model*> components_;
 
 	GLuint ambient_light_colour_id_;
 	::glm::vec3 ambient_light_colour_;

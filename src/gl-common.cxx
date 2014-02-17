@@ -234,7 +234,19 @@ void model::set_shader(
 
 void model::add_component(model& m)
 {
-	components_.push_back(&m);
+	components_.insert(&m);
+	m.set_ambient_light_colour(ambient_light_colour_);
+	for (int i = 0; i < point_source_locations_.size(); ++i)
+		m.add_point_source(
+			point_source_locations_[i],
+			point_source_colours_[i],
+			point_source_powers_[i]
+		);
+}
+
+void model::remove_component(model& m)
+{
+	components_.erase(&m);
 }
 
 void model::update_model(::glm::mat4 const& t)
