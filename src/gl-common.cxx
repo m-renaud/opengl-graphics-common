@@ -22,6 +22,23 @@ void init(float r, float g, float b, float a)
 	::glDepthFunc(GL_LESS);
 }
 
+shader_handle colour_shader()
+{
+	return shader_handle(
+		"/usr/local/share/mrr/graphics/shaders/colour-vertex-shader.glsl",
+		"/usr/local/share/mrr/graphics/shaders/colour-fragment-shader.glsl"
+	);
+}
+
+
+shader_handle texture_shader()
+{
+	return shader_handle(
+		"/usr/local/share/mrr/graphics/shaders/texture-vertex-shader.glsl",
+		"/usr/local/share/mrr/graphics/shaders/texture-fragment-shader.glsl"
+	);
+}
+
 
 static GLuint loadDDS(const char * imagepath)
 {

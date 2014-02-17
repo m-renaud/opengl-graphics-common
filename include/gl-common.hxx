@@ -45,6 +45,9 @@ private:
 };
 
 
+shader_handle colour_shader();
+shader_handle texture_shader();
+
 
 class vertex_array
 {
