@@ -25,14 +25,19 @@ public:
 
 	~waypoint() = default;
 
-	waypoint(::glm::vec4 location);
+	waypoint(::glm::vec3 location, double radius);
 
-	void set_location(::glm::vec4 const& location);
-	::glm::vec4 const& get_location() const;
+	void set_location(::glm::vec3 const& location);
+	::glm::vec3 const& get_location() const;
+
+	void set_radius(double radius);
+	double get_radius() const;
 
 	void add_action(model& m, action_type const& action);
+	::std::map<model*, std::vector<action_type> > const& get_actions() const;
 
-	::glm::vec4 location_;
+	::glm::vec3 location_;
+	double radius_;
 	::std::map<model*, std::vector<action_type> > actions_;
 };
 

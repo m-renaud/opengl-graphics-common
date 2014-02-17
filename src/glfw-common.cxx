@@ -21,6 +21,7 @@ window_handle::window_handle(
 		::exit(3);
 	}
 
+	set_framebuffer_size_callback(framebuffer_size_callback);
 	set_key_callback(::mrr::graphics::glfw::key_callback);
 	set_mouse_callback(::mrr::graphics::glfw::mouse_callback);
 
@@ -64,6 +65,33 @@ void window_handle::set_framebuffer_size_callback(GLFWframebuffersizefun callbac
 	::glfwSetFramebufferSizeCallback(window_, callback);
 }
 
+void window_handle::add_waypoint(::mrr::graphics::gl::waypoint const& wp)
+{
+	waypoints_.push_back(wp);
+}
+
+void window_handle::process_waypoints() const
+{
+	for (auto const& wp : waypoints_)
+	{
+		for (auto& target_action_list_pair : wp.get_actions())
+		{
+			auto& target
+				=	dynamic_cast<::mrr::graphics::gl::component&>(*target_action_list_pair.first);
+
+			double distance = glm::length(target.get_location() - wp.get_location());
+
+			if (distance < wp.get_radius())
+			{
+				for (auto const& action : target_action_list_pair.second)
+				{
+					action(target);
+				}
+			}
+		}
+	}
+}
+
 void window_handle::swap_buffers()
 {
 	::glfwSwapBuffers(window_);
@@ -77,6 +105,11 @@ bool window_handle::should_close()
 GLFWwindow* window_handle::get()
 {
 	return window_;
+}
+
+double window_handle::get_ms_per_frame() const
+{
+	return ms_per_frame;
 }
 
 //m=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

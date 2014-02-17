@@ -382,18 +382,19 @@ component::component()
 {
 }
 
-::glm::vec4 const& component::get_location() const
+::glm::vec3 const& component::get_location() const
 {
 	return location_;
 }
 
 void component::update_location()
 {
-	location_ = model_ * glm::vec4(0, 0, 0, 1);
+	location_ = glm::vec3(model_ * glm::vec4(0, 0, 0, 1));
 }
 
 void component::set_vertex_data(GLfloat const* vertex_data, int size)
 {
+	std::cerr << "Setting vertex data: size = " << size << std::endl;
 	va_size_ = size;
 	vertex_data_ = vertex_data;
 

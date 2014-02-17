@@ -1,6 +1,7 @@
 #ifndef MRR_GRAPHICS_GLFW_COMMON_HXX__
 #define MRR_GRAPHICS_GLFW_COMMON_HXX__
 
+#include <mrr/graphics/waypoint.hxx>
 #include <GLFW/glfw3.h>
 
 #include <functional>
@@ -48,15 +49,42 @@ public:
 	void set_mouse_callback(GLFWmousebuttonfun callback);
 	std::pair<double, double> get_cursor_position() const;
 	void set_framebuffer_size_callback(GLFWframebuffersizefun callback);
+
+	void add_waypoint(::mrr::graphics::gl::waypoint const& wp);
+
+	template <typename Iter>
+	void add_waypoints(Iter begin, Iter end)
+	{
+		for (; begin != end; ++begin)
+			add_waypoint(*begin);
+	}
+
+	void process_waypoints() const;
 	void swap_buffers();
 	bool should_close();
+
+	double get_ms_per_frame() const;
 
 	template <typename LoopBody>
 	void main_loop(LoopBody&& loop_body)
 	{
+		last_time = ::glfwGetTime();
+		nb_frames = 0;
+
 		while (!should_close())
 		{
+			current_time = ::glfwGetTime();
+			++nb_frames;
+
+			if (current_time - last_time >= 1)
+			{
+				ms_per_frame = 1000.0 / static_cast<double>(nb_frames);
+				nb_frames = 0;
+				last_time += (current_time - last_time);
+			}
+
 			::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			process_waypoints();
 			loop_body();
 			swap_buffers();
 			::glfwPollEvents();
@@ -67,6 +95,12 @@ public:
 
 private:
 	GLFWwindow* window_;
+	::std::vector<::mrr::graphics::gl::waypoint> waypoints_;
+
+	double last_time;
+	double current_time;
+	int nb_frames;
+	double ms_per_frame;
 };
 
 

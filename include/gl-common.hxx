@@ -168,10 +168,6 @@ protected:
 	::std::vector<glm::vec3> point_source_locations_;
 	::std::vector<glm::vec3> point_source_colours_;
 	::std::vector<float> point_source_powers_;
-
-	// glm::vec3 point_source_location_;
-	// glm::vec3 point_source_colour_;
-	// float point_source_power_;
 };
 
 
@@ -183,7 +179,7 @@ private:
 public:
 	component();
 
-	::glm::vec4 const& get_location() const;
+	::glm::vec3 const& get_location() const;
 
 	void set_vertex_data(GLfloat const* vertex_data, int size);
 	void set_colour_data(GLfloat const* colour_data);
@@ -223,7 +219,7 @@ protected:
 
 	int va_size_;
 
-	::glm::vec4 location_;
+	::glm::vec3 location_;
 	::glm::mat4 init_model_;
 	::glm::mat4 model_;
 	::glm::mat4 model_save_;
