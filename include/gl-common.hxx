@@ -82,6 +82,7 @@ public:
 	~buffer();
 
 	void create();
+	void destroy();
 	void bind(GLenum target);
 
 private:
@@ -96,10 +97,13 @@ public:
 	~texture();
 
 	void load(::std::string const& filename);
+	void destroy();
 	void bind(GLenum);
+	bool is_loaded() const;
 
 private:
 	GLuint texture_;
+	bool is_loaded_;
 };
 
 
@@ -199,6 +203,10 @@ public:
 
 protected:
 	GLuint texture_sampler_id_;
+
+	std::vector<glm::vec3> vertices_;
+	std::vector<glm::vec2> uvs_;
+	std::vector<glm::vec3> normals_;
 
 	GLuint shape_colour_id_;
 	::glm::vec3 shape_colour_;

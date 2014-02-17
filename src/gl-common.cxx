@@ -183,13 +183,19 @@ buffer::buffer()
 
 buffer::~buffer()
 {
-	if (buffer_ != 0)
-		::glDeleteBuffers(1, &buffer_);
+	destroy();
 }
 
 void buffer::create()
 {
+	destroy();
 	::glGenBuffers(1, &buffer_);
+}
+
+void buffer::destroy()
+{
+	if (buffer_ != 0)
+		::glDeleteBuffers(1, &buffer_);
 }
 
 void buffer::bind(GLenum target = GL_ARRAY_BUFFER)
@@ -200,25 +206,37 @@ void buffer::bind(GLenum target = GL_ARRAY_BUFFER)
 
 //m=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 texture::texture()
-	: texture_(0)
+	: texture_(0),
+	  is_loaded_(false)
 {
 }
 
 texture::~texture()
 {
-	if (texture_ != 0)
-		::glDeleteTextures(1, &texture_);
+	destroy();
 }
 
 void texture::load(::std::string const& filename)
 {
 	texture_ = loadDDS(filename.c_str());
+	is_loaded_ = true;
+}
+
+void texture::destroy()
+{
+	if (texture_ != 0)
+		::glDeleteTextures(1, &texture_);
 }
 
 void texture::bind(GLenum target = GL_TEXTURE_2D)
 {
 	::glActiveTexture(GL_TEXTURE0);
 	::glBindTexture(target, texture_);
+}
+
+bool texture::is_loaded() const
+{
+	return is_loaded_;
 }
 
 
@@ -394,7 +412,6 @@ void component::update_location()
 
 void component::set_vertex_data(GLfloat const* vertex_data, int size)
 {
-	std::cerr << "Setting vertex data: size = " << size << std::endl;
 	va_size_ = size;
 	vertex_data_ = vertex_data;
 
@@ -467,20 +484,16 @@ void component::apply_fp_transformation(::glm::mat4 const& t)
 
 void component::load_wavefront(std::string const& model_file)
 {
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec2> uvs;
-	std::vector<glm::vec3> normals;
-
-	bool successful = impl::load_wavefront(model_file, vertices, uvs, normals);
+	bool successful = impl::load_wavefront(model_file, vertices_, uvs_, normals_);
 	if (!successful)
 	{
 		std::cerr << "Failed to load Wavefront OBJ file.\n";
 		std::exit(1);
 	}
 
-	set_vertex_data(&vertices[0].x, vertices.size() * sizeof(glm::vec3));
-	set_uv_data(&uvs[0].x, uvs.size() * sizeof(glm::vec2));
-	set_normal_data(&normals[0].x, normals.size() * sizeof(glm::vec3));
+	set_vertex_data(&vertices_[0].x, vertices_.size() * sizeof(glm::vec3));
+	set_uv_data(&uvs_[0].x, uvs_.size() * sizeof(glm::vec2));
+	set_normal_data(&normals_[0].x, normals_.size() * sizeof(glm::vec3));
 }
 
 void component::render(::glm::mat4 const& V, ::glm::mat4 const& P)
@@ -501,14 +514,10 @@ void component::render(::glm::mat4 const& V, ::glm::mat4 const& P)
 	::glUniformMatrix4fv(model_matrix_id_, 1, GL_FALSE, &model_[0][0]);
 	::glUniformMatrix4fv(view_matrix_id_, 1, GL_FALSE, &V[0][0]);
 
-	if (uv_data_ != nullptr)
+	if (texture_.is_loaded())
 	{
 		texture_.bind();
 		::glUniform1i(texture_sampler_id_, 0);
-
-		::glEnableVertexAttribArray(1);
-		uv_buffer_.bind();
-		::glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	}
 
 	// Bind vertex attribute buffer...
@@ -516,6 +525,12 @@ void component::render(::glm::mat4 const& V, ::glm::mat4 const& P)
 	vertex_buffer_.bind();
 	::glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
+	if (uv_data_ != nullptr)
+	{
+		::glEnableVertexAttribArray(1);
+		uv_buffer_.bind();
+		::glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	}
 
 	// NOTE: Colour data and normal/texture data must be mutually exclusize.
 	if (colour_data_ != nullptr)
@@ -537,7 +552,7 @@ void component::render(::glm::mat4 const& V, ::glm::mat4 const& P)
 		::glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	}
 
-	::glDrawArrays(GL_TRIANGLES, 0, va_size_);
+	::glDrawArrays(GL_TRIANGLES, 0, vertices_.size());
 
 	::glDisableVertexAttribArray(0);
 	::glDisableVertexAttribArray(1);
