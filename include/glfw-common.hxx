@@ -46,6 +46,7 @@ public:
 	void make_current();
 	void set_key_callback(GLFWkeyfun callback);
 	void set_mouse_callback(GLFWmousebuttonfun callback);
+	std::pair<double, double> get_cursor_position() const;
 	void set_framebuffer_size_callback(GLFWframebuffersizefun callback);
 	void swap_buffers();
 	bool should_close();

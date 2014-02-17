@@ -52,6 +52,13 @@ void window_handle::set_mouse_callback(GLFWmousebuttonfun callback)
 	::glfwSetMouseButtonCallback(window_, callback);
 }
 
+std::pair<double, double> window_handle::get_cursor_position() const
+{
+	std::pair<double, double> cursor_position;
+	::glfwGetCursorPos(window_, &cursor_position.first, &cursor_position.second);
+	return cursor_position;
+}
+
 void window_handle::set_framebuffer_size_callback(GLFWframebuffersizefun callback)
 {
 	::glfwSetFramebufferSizeCallback(window_, callback);
