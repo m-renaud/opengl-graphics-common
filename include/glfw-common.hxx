@@ -63,6 +63,9 @@ public:
 	void swap_buffers();
 	bool should_close();
 
+	int get_width() const;
+	int get_height() const;
+
 	double get_ms_per_frame() const;
 
 	template <typename LoopBody>

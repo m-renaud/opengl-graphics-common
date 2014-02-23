@@ -102,6 +102,20 @@ bool window_handle::should_close()
 	return ::glfwWindowShouldClose(window_);
 }
 
+int window_handle::get_width() const
+{
+	int width, height;
+	::glfwGetWindowSize(window_, &width, &height);
+	return width;
+}
+
+int window_handle::get_height() const
+{
+	int width, height;
+	::glfwGetWindowSize(window_, &width, &height);
+	return height;
+}
+
 GLFWwindow* window_handle::get()
 {
 	return window_;
