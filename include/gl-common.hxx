@@ -32,7 +32,7 @@ public:
 		::std::string const& fragment_shader_file
 	);
 
-	void use();
+	void use() const;
 	GLuint get_program_id();
 	GLuint get_uniform_location(char const* var_name);
 
@@ -83,7 +83,7 @@ public:
 
 	void create();
 	void destroy();
-	void bind(GLenum target);
+	void bind(GLenum target) const;
 
 private:
 	GLuint buffer_;
@@ -98,7 +98,7 @@ public:
 
 	void load(::std::string const& filename);
 	void destroy();
-	void bind(GLenum);
+	void bind(GLenum) const;
 	bool is_loaded() const;
 
 private:
@@ -149,7 +149,7 @@ public:
 	std::vector<glm::vec3> const& get_point_source_colours() const;
 	std::vector<float> get_point_source_powers() const;
 
-	virtual void render(::glm::mat4 const& V, ::glm::mat4 const& P);
+	virtual void render(::glm::mat4 const& V, ::glm::mat4 const& P) const;
 
 protected:
 	::mrr::graphics::gl::shader_handle shader_;
@@ -199,7 +199,7 @@ public:
 	void save();
 	void reset();
 
-	virtual void render(::glm::mat4 const& V, ::glm::mat4 const& P);
+	virtual void render(::glm::mat4 const& V, ::glm::mat4 const& P) const;
 
 protected:
 	GLuint texture_sampler_id_;
@@ -231,6 +231,20 @@ protected:
 	::glm::mat4 init_model_;
 	::glm::mat4 model_;
 	::glm::mat4 model_save_;
+};
+
+
+class viewport
+{
+public:
+	viewport(GLint x, GLint y, GLsizei width, GLsizei height);
+	void render(model const& m, ::glm::mat4 const& V, ::glm::mat4 const& P) const;
+
+private:
+	GLint x_;
+	GLint y_;
+	GLsizei width_;
+	GLsizei height_;
 };
 
 

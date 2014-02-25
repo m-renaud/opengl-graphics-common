@@ -142,7 +142,7 @@ shader_handle::~shader_handle()
 	::glDeleteProgram(shader_program_id_);
 }
 
-void shader_handle::use()
+void shader_handle::use() const
 {
 	::glUseProgram(shader_program_id_);
 }
@@ -198,7 +198,7 @@ void buffer::destroy()
 		::glDeleteBuffers(1, &buffer_);
 }
 
-void buffer::bind(GLenum target = GL_ARRAY_BUFFER)
+void buffer::bind(GLenum target = GL_ARRAY_BUFFER) const
 {
 	::glBindBuffer(target, buffer_);
 }
@@ -228,7 +228,7 @@ void texture::destroy()
 		::glDeleteTextures(1, &texture_);
 }
 
-void texture::bind(GLenum target = GL_TEXTURE_2D)
+void texture::bind(GLenum target = GL_TEXTURE_2D) const
 {
 	::glActiveTexture(GL_TEXTURE0);
 	::glBindTexture(target, texture_);
@@ -377,7 +377,7 @@ void model::reset()
 		m->reset();
 }
 
-void model::render(::glm::mat4 const& V, ::glm::mat4 const& P)
+void model::render(::glm::mat4 const& V, ::glm::mat4 const& P) const
 {
 	for (model* m : components_)
 		m->render(V, P);
@@ -496,7 +496,7 @@ void component::load_wavefront(std::string const& model_file)
 	set_normal_data(&normals_[0].x, normals_.size() * sizeof(glm::vec3));
 }
 
-void component::render(::glm::mat4 const& V, ::glm::mat4 const& P)
+void component::render(::glm::mat4 const& V, ::glm::mat4 const& P) const
 {
 	::glm::mat4 MVP = P * V * model_;
 	shader_.use();
@@ -567,6 +567,19 @@ void component::save()
 void component::reset()
 {
 	model_ = model_save_;
+}
+
+
+//m=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+viewport::viewport(GLint x, GLint y, GLsizei width, GLsizei height)
+	: x_(x), y_(y), width_(width), height_(height)
+{
+}
+
+void viewport::render(model const& m, ::glm::mat4 const& V, ::glm::mat4 const& P) const
+{
+	::glViewport(x_, y_, width_, height_);
+	m.render(V, P);
 }
 
 
