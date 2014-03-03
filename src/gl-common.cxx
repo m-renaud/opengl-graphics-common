@@ -426,6 +426,12 @@ void component::set_colour(::glm::vec3 const& shape_colour)
 	shape_colour_ = shape_colour;
 }
 
+void component::set_specular_colour(::glm::vec3 const& specular_colour)
+{
+	specular_colour_id_ = shader_.get_uniform_location("specular_colour");
+	specular_colour_ = specular_colour;
+}
+
 void component::set_colour_data(GLfloat const* colour_data)
 {
 	texture_sampler_id_ = shader_.get_uniform_location("texture_sampler");
@@ -543,6 +549,16 @@ void component::render(::glm::mat4 const& V, ::glm::mat4 const& P) const
 	if (shape_colour_id_ != 0)
 	{
 		::glUniform3fv(shape_colour_id_, 1, &shape_colour_[0]);
+	}
+
+	if (specular_colour_id_ != 0)
+	{
+		::glUniform3fv(specular_colour_id_, 1, &specular_colour_[0]);
+	}
+	else
+	{
+		glm::vec3 specular_colour(0.3f, 0.3f, 0.3f);
+		::glUniform3fv(specular_colour_id_, 1, &specular_colour[0]);
 	}
 
 	if (normal_data_ != nullptr)

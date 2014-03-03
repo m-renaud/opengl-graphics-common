@@ -14,6 +14,8 @@ out vec3 color;
 uniform sampler2D texture_sampler;
 uniform mat4 MV;
 
+uniform vec3 specular_colour;
+
 // Allow up to 8 point-source lights.
 uniform vec3 LightPosition_worldspace[8];
 uniform vec3 LightColour[8];
@@ -27,7 +29,7 @@ void main()
 	// Material properties
 	vec3 MaterialDiffuseColour = texture2D(texture_sampler, UV).rgb;
 	vec3 MaterialAmbientColour = AmbientLightColour * MaterialDiffuseColour;
-	vec3 MaterialSpecularColour = vec3(0.3, 0.3, 0.3);
+	vec3 MaterialSpecularColour = specular_colour;
 
 	// Ambient : simulates indirect lighting
 	color = MaterialAmbientColour;

@@ -188,6 +188,7 @@ public:
 	void set_vertex_data(GLfloat const* vertex_data, int size);
 	void set_colour_data(GLfloat const* colour_data);
 	void set_colour(::glm::vec3 const& shape_colour);
+	void set_specular_colour(::glm::vec3 const& specular_colour);
 	void set_uv_data(GLfloat const* uv_data, int size);
 	void set_normal_data(GLfloat const* normal_data, int size);
 	void load_texture(::std::string const& filename);
@@ -210,6 +211,9 @@ protected:
 
 	GLuint shape_colour_id_;
 	::glm::vec3 shape_colour_;
+
+	GLuint specular_colour_id_;
+	::glm::vec3 specular_colour_;
 
 	::mrr::graphics::gl::buffer vertex_buffer_;
 	GLfloat const* vertex_data_;

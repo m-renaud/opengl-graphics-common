@@ -10,6 +10,7 @@ in vec3 LightDirection_cameraspace[number_of_lights];
 out vec3 color;
 
 uniform vec3 shape_colour;
+uniform vec3 specular_colour;
 
 // Allow up to 8 point-source lights.
 uniform vec3 LightPosition_worldspace[number_of_lights];
@@ -25,7 +26,7 @@ void main()
 	// Material properties
 	vec3 MaterialDiffuseColour = shape_colour;
 	vec3 MaterialAmbientColour = AmbientLightColour * MaterialDiffuseColour;
-	vec3 MaterialSpecularColour = vec3(0.3, 0.3, 0.3);
+	vec3 MaterialSpecularColour = specular_colour;
 
 	color = MaterialAmbientColour;
 
