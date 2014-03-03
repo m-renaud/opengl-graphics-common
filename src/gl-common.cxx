@@ -5,6 +5,11 @@
 #include <iostream>
 #include <string.h>
 
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+
 #define FOURCC_DXT1  0x31545844
 #define FOURCC_DXT2  0x32545844
 #define FOURCC_DXT3  0x33545844
@@ -296,6 +301,12 @@ void model::apply_fp_transformation(::glm::mat4 const& t)
 		m->apply_fp_transformation(t);
 }
 
+void model::apply_fp_transformation(::glm::mat4 const& t, ::glm::vec3 const& fp)
+{
+	for (model* m : components_)
+		m->apply_fp_transformation(t, fp);
+}
+
 void model::set_ambient_light_colour(::glm::vec3 const& colour)
 {
 	ambient_light_colour_id_ = shader_.get_uniform_location("AmbientLightColour");
@@ -485,6 +496,15 @@ void component::update_model(::glm::mat4 const& t)
 void component::apply_fp_transformation(::glm::mat4 const& t)
 {
 	model_ = model_ * t;
+	update_location();
+}
+
+void component::apply_fp_transformation(::glm::mat4 const& t, ::glm::vec3 const& fp)
+{
+	model_ = glm::translate(glm::mat4(1.0f), -fp) * model_;
+	model_ = t * model_;
+	model_ = glm::translate(glm::mat4(1.0f), fp) * model_;
+
 	update_location();
 }
 

@@ -130,6 +130,7 @@ public:
 	void remove_component(model& m);
 	virtual void update_model(::glm::mat4 const& t);
 	virtual void apply_fp_transformation(::glm::mat4 const& t);
+	virtual void apply_fp_transformation(::glm::mat4 const& t, ::glm::vec3 const& fp);
 	virtual void save();
 	virtual void reset();
 
@@ -196,6 +197,7 @@ public:
 	void set_model(::glm::mat4 const& m);
 	void update_model(::glm::mat4 const& t);
 	void apply_fp_transformation(::glm::mat4 const& t);
+	void apply_fp_transformation(::glm::mat4 const& t, ::glm::vec3 const& fp);
 	void load_wavefront(std::string const& path);
 	void save();
 	void reset();
