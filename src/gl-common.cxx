@@ -407,7 +407,8 @@ component::component()
 	  normal_data_(nullptr),
 	  va_size_(-1),
 	  model_(::glm::mat4(1.0f)),
-	  model_save_(::glm::mat4(1.0f))
+		model_save_(::glm::mat4(1.0f)),
+		drawing_mode_(GL_TRIANGLES)
 {
 }
 
@@ -495,8 +496,9 @@ void component::update_model(::glm::mat4 const& t)
 
 void component::apply_fp_transformation(::glm::mat4 const& t)
 {
-	model_ = model_ * t;
-	update_location();
+	// model_ = model_ * t;
+	// update_location();
+	apply_fp_transformation(t, get_location());
 }
 
 void component::apply_fp_transformation(::glm::mat4 const& t, ::glm::vec3 const& fp)
@@ -506,6 +508,16 @@ void component::apply_fp_transformation(::glm::mat4 const& t, ::glm::vec3 const&
 	model_ = glm::translate(glm::mat4(1.0f), fp) * model_;
 
 	update_location();
+}
+
+void component::set_heading(::glm::vec3 const& heading)
+{
+	heading_ = heading;
+}
+
+void component::update_heading(::glm::mat4 const& t)
+{
+	heading_ = glm::vec3(t * glm::vec4(heading_, 1));
 }
 
 void component::load_wavefront(std::string const& model_file)
@@ -520,6 +532,11 @@ void component::load_wavefront(std::string const& model_file)
 	set_vertex_data(&vertices_[0].x, vertices_.size() * sizeof(glm::vec3));
 	set_uv_data(&uvs_[0].x, uvs_.size() * sizeof(glm::vec2));
 	set_normal_data(&normals_[0].x, normals_.size() * sizeof(glm::vec3));
+}
+
+void component::set_drawing_mode(GLenum drawing_mode)
+{
+	drawing_mode_ = drawing_mode;
 }
 
 void component::render(::glm::mat4 const& V, ::glm::mat4 const& P) const
@@ -588,7 +605,7 @@ void component::render(::glm::mat4 const& V, ::glm::mat4 const& P) const
 		::glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	}
 
-	::glDrawArrays(GL_TRIANGLES, 0, vertices_.size());
+	::glDrawArrays(drawing_mode_, 0, vertices_.size());
 
 	::glDisableVertexAttribArray(0);
 	::glDisableVertexAttribArray(1);

@@ -198,7 +198,10 @@ public:
 	void update_model(::glm::mat4 const& t);
 	void apply_fp_transformation(::glm::mat4 const& t);
 	void apply_fp_transformation(::glm::mat4 const& t, ::glm::vec3 const& fp);
+	void set_heading(::glm::vec3 const& heading);
+	void update_heading(::glm::mat4 const& t);
 	void load_wavefront(std::string const& path);
+	void set_drawing_mode(GLenum drawing_mode);
 	void save();
 	void reset();
 
@@ -234,9 +237,12 @@ protected:
 	int va_size_;
 
 	::glm::vec3 location_;
+	::glm::vec3 heading_;
 	::glm::mat4 init_model_;
 	::glm::mat4 model_;
 	::glm::mat4 model_save_;
+
+	GLenum drawing_mode_;
 };
 
 
